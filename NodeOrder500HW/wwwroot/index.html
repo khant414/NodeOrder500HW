@@ -7,6 +7,14 @@
 </head>
 <body>
     <div>
+        <select id="salesPersonSelect" label="test"></select><select id="storeSelect"></select><select id="cdSelect"></select> <input type="text" placeholder="count" id="howmany" size="5" />
+    </div>
+
+    <div>
+        <h2>Add Order</h2>
+        <input type="button" value="Add Order" onclick="addOrder();" />
+    </div>
+    <div>
         <h2>Orders</h2>
         <ul id="orders" />
         <table data-role="table" class="ui-responsive" id="ordersTable">
@@ -31,14 +39,7 @@
         <p id="description" />
     </div>
     <br /><br /><br /><br />
-    <div>
-        <select id="salesPersonSelect"></select><select id="storeSelect"></select><select id="cdSelect"></select> <input type="text" placeholder="count" id="howmany" size="5" />
-    </div>
 
-    <div>
-        <h2>Add Count Event</h2>
-        <input type="button" value="Add Event" onclick="addEvent();" />
-    </div>
 
     <script src="http://ajax.aspnetcdn.com/ajax/jQuery/jquery-2.0.3.min.js"></script>
     <script src="/js/site.js"></script>

@@ -3,8 +3,6 @@
 
 $(document).ready(function () {
     // Send an AJAX request
-
-    
     $.getJSON('api/Orders')   
         .done(function (data) {
             // On success, 'data' contains a list of products.
@@ -39,7 +37,6 @@ $(document).ready(function () {
             let cdArray = data;
             let cdSelect = document.getElementById("cdSelect");
             cdArray.forEach(function (value) {
-                console.log(value)
                 cdSelect.appendChild(new Option(value.cdname, value.cdId));
             });
 
@@ -84,6 +81,41 @@ function drawTable(orderArray) {
         tbl.appendChild(row); // add the row to the end of the table body
     }
 
+}
+
+function addOrder() {
+
+    let selectSalesPerson = document.getElementById('salesPersonSelect');
+    let salesPersonValue = selectSalesPerson.options[selectSalesPerson.selectedIndex].value;
+
+    let selectCd = document.getElementById('cdSelect');
+    let cdValue = selectCd.options[selectCd.selectedIndex].value;
+
+    let selectStore = document.getElementById('storeSelect');
+    let storeValue = selectStore.options[selectStore.selectedIndex].value;
+
+    console.log(salesPersonValue)
+    console.log(cdValue)
+    console.log(storeValue)
+
+    let newOrder = new Order();
+    newOrder.SalesPersonId = salesPersonValue;
+    newOrder.CdId = cdValue;
+    newOrder.StoreId = storeValue;
+    console.log(newOrder);
+    $.ajax({
+        url: "api/Orders",
+        type: "POST",
+        data: JSON.stringify(newOrder),
+        contentType: "application/json; charset=utf-8",
+
+        success: function (result) {
+            alert(result + " was added");
+        },
+        error: function (XMLHttpRequest, textStatus, errorThrown) {
+            alert("Status: " + textStatus); alert("Error: " + errorThrown);
+        }
+    });
 }
 
 let Order = function (pOrdersId, pStoreId, pSalesPersonId, pCdId, pPricePaid,pDate) {

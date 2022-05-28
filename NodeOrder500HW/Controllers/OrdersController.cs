@@ -42,62 +42,51 @@ namespace NodeOrder500HW.Controllers
                 return myList;
 
         }
-
-
-
-        // GET api/<OrdersController>/5
-            [HttpGet("{id}")]
-        public string Get(int id)
-        {
-            return "value";
-        }
-
         // POST api/<OrdersController>
-        //[HttpPost]
-        //public void Post([FromBody] NewBird oneEvent)
-        //{
-        //    var context = new Models.OrdersDBContext();
+        [HttpPost]
+        public void Post([FromBody] NewOrder oneOrder)
+        {
+            var context = new OrdersDBContext();
 
-        //    Bird pointedToBird = new Bird();
-        //    var findBird = (from oneBird in context.Birds
-        //                    where oneBird.BirdId == oneEvent.BirdID
-        //                    select oneBird).First();
+            CdTable pointedCd = new CdTable();
+            var searchCd = (from oneCd in context.CdTables 
+                            where oneCd.CdId == oneOrder.CdId
+                            select oneCd).First();
 
-        //    Birder pointedToBirder = new Birder();
-        //    var findBirder = (from oneBirder in context.Birders
-        //                      where oneBirder.BirderId == oneEvent.BirderID
-        //                      select oneBirder).First();
+            SalesPersonTable pointedToSalesPerson = new SalesPersonTable();
+            var searchSales = (from oneSalesPerson in context.SalesPersonTables
+                              where oneSalesPerson.SalesPersonId == oneOrder.SalesPersonId
+                              select oneSalesPerson).First();
 
-        //    Region pointedToRegion = new Region();
-        //    var findRegion = (from oneRegion in context.Regions
-        //                      where oneRegion.RegionId == oneEvent.RegionID
-        //                      select oneRegion).First();
+            StoreTable pointedToRegion = new StoreTable();
+            var searchStore = (from oneStore in context.StoreTables
+                              where oneStore.StoreId == oneOrder.StoreId
+                              select oneStore).First();
 
-        //    BirdCount newEvent = new BirdCount();
-        //    newEvent.RegionId = oneEvent.RegionID;
-        //    newEvent.BirderId = oneEvent.BirderID;
-        //    newEvent.Counted = oneEvent.Counted;
-        //    newEvent.CountDate = DateTime.Now;
-        //    newEvent.BirdId = oneEvent.BirdID;
-        //    newEvent.Bird = findBird;
-        //    newEvent.Birder = findBirder;
-        //    newEvent.Region = findRegion;
+            OrdersTable newOrder = new OrdersTable();
+            newOrder.StoreId = oneOrder.StoreId;
+            newOrder.SalesPersonId = oneOrder.SalesPersonId;
+            newOrder.Date = Convert.ToString(DateTime.Now);
+            newOrder.CdId = oneOrder.CdId;
+            newOrder.Cd = searchCd;
+            newOrder.SalesPerson = searchSales;
+            newOrder.Store = searchStore;
 
-        //    try
-        //    {
-        //        context.BirdCounts.Add(newEvent);
-        //        context.SaveChanges();
-
+            try
+            {
+                context.OrdersTables.Add(newOrder);
+                context.SaveChanges();
 
 
-        //    }
-        //    catch (Exception ex)
-        //    {
 
-        //        Console.WriteLine(ex.Message);
-        //    }
+            }
+            catch (Exception ex)
+            {
 
-        //}
+                Console.WriteLine(ex.Message);
+            }
+
+        }
 
         // PUT api/<OrdersController>/5
         [HttpPut("{id}")]
@@ -112,22 +101,15 @@ namespace NodeOrder500HW.Controllers
         }
     }
 
-    public class BirdData // json or somebody forces prop names to start lower case!
-    {
-        public int countId { get; set; }
-        public int counted { get; set; }
-        public DateTime countDate { get; set; }
-        public string name { get; set; }
-        public string regionName { get; set; } = null!;
-    }
+  
 
-    public class NewBird
+    public class NewOrder
     {
-        public string RegionID { get; set; }
-        public int BirderID { get; set; }
-        public string BirdID { get; set; }
-        public int Counted { get; set; }
-   
+        public int StoreId { get; set; }
+        public int SalesPersonId { get; set; }
+        public int CdId { get; set; }
+        public DateTime Date { get; set; }
+
     }
 
 }
