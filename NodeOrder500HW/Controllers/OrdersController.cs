@@ -87,6 +87,34 @@ namespace NodeOrder500HW.Controllers
             }
 
         }
+        [HttpGet("{store}")]
+        public List<storePerformanceData> Get(string store)
+        {
+
+            List<storePerformanceData> myList = new List<storePerformanceData>();
+
+            var context = new Models.OrdersDBContext();
+            var performanceQuery = from eachOrderEvent in context.OrdersTables
+                                   group eachOrderEvent by eachOrderEvent.Store.City into storeGroup
+                                   select new
+                                   {
+                                       Store = storeGroup.Key,
+                                       TotalSum = storeGroup.Sum(x => x.PricePaid)
+                                   };
+            storePerformanceData storePerformance = new storePerformanceData();
+
+            foreach (var item in performanceQuery) 
+            {
+                storePerformanceData temp = new storePerformanceData();
+                temp.Store = item.Store;
+                temp.Sum = item.TotalSum;
+                myList.Add(temp);
+            }
+            
+            return myList;
+        }
+
+
 
         // PUT api/<OrdersController>/5
         [HttpPut("{id}")]
@@ -109,6 +137,12 @@ namespace NodeOrder500HW.Controllers
         public int SalesPersonId { get; set; }
         public int CdId { get; set; }
         public DateTime Date { get; set; }
+
+    }
+    public class storePerformanceData
+    {
+        public string Store { get; set; }
+        public int Sum { get; set; }
 
     }
 

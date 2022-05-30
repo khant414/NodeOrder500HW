@@ -29,6 +29,9 @@ $(document).ready(function () {
             StoreArray.forEach(function (value) {
                 storeSelect.appendChild(new Option(value.city, value.storeId));
             });
+            StoreArray.forEach(function (value) {
+                storePerformanceSelect.appendChild(new Option(value.city, value.storeId));
+            });
         });
 
     $.getJSON('api/SelectGets/GetCds')
@@ -83,6 +86,25 @@ function drawTable(orderArray) {
 
 }
 
+function findStorePerformance() {
+
+    $.ajax({
+        url: "api/Orders",
+        type: "POST",
+        data: JSON.stringify(newOrder),
+        contentType: "application/json; charset=utf-8",
+
+        success: function (result) {
+            alert(result + " was added");
+        },
+        error: function (XMLHttpRequest, textStatus, errorThrown) {
+            alert("Status: " + textStatus); alert("Error: " + errorThrown);
+        }
+    });
+
+
+}
+
 function addOrder() {
 
     let selectSalesPerson = document.getElementById('salesPersonSelect');
@@ -117,6 +139,27 @@ function addOrder() {
         }
     });
 }
+
+function findStorePerformance() {
+
+    let selectPerformanceStore = document.getElementById('storePerformanceSelect');
+    let storePerformanceValue = selectPerformanceStore.options[selectPerformanceStore.selectedIndex].value;
+
+    console.log(storePerformanceValue);
+
+    $.getJSON('api/Orders' + '/' + storePerformanceValue)
+        .done(function (data) {
+            console.log(data);
+            $('#description').text(data);
+        })
+        .fail(function (jqXHR, textStatus, err) {
+            $('#description').text('Error: ' + err);
+        });
+
+}
+
+
+
 
 let Order = function (pOrdersId, pStoreId, pSalesPersonId, pCdId, pPricePaid,pDate) {
     this.OrdersId = pOrdersId;
