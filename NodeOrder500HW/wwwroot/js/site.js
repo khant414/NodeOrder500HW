@@ -86,24 +86,58 @@ function drawTable(orderArray) {
 
 }
 
-function findStorePerformance() {
+function drawPerformanceTable(performanceArray) {
+    // get the reference for the table
+    // creates a <table> element
+    var tbl = document.getElementById('performanceTable');
+    while (tbl.rows.length > 1) {  // clear, but don't delete the header
+        tbl.deleteRow(1);
+    }
 
-    $.ajax({
-        url: "api/Orders",
-        type: "POST",
-        data: JSON.stringify(newOrder),
-        contentType: "application/json; charset=utf-8",
+    // creating rows
+    for (var r = 0; r < performanceArray.length; r++) {
+        var row = document.createElement("tr");
 
-        success: function (result) {
-            alert(result + " was added");
-        },
-        error: function (XMLHttpRequest, textStatus, errorThrown) {
-            alert("Status: " + textStatus); alert("Error: " + errorThrown);
-        }
-    });
+        var cell0 = document.createElement("td");
+        var cell1 = document.createElement("td");
 
+        cell0.appendChild(document.createTextNode(performanceArray[r].store));
+        row.appendChild(cell0);
+        cell1.appendChild(document.createTextNode(performanceArray[r].sum));
+        row.appendChild(cell1);
+
+        tbl.appendChild(row); // add the row to the end of the table body
+    }
 
 }
+
+function drawCdTable(cdArray) {
+    // get the reference for the table
+    // creates a <table> element
+    var tbl = document.getElementById('cdTable');
+    while (tbl.rows.length > 1) {  // clear, but don't delete the header
+        tbl.deleteRow(1);
+    }
+
+    // creating rows
+    for (var r = 0; r < cdArray.length; r++) {
+        var row = document.createElement("tr");
+
+        var cell0 = document.createElement("td");
+        var cell1 = document.createElement("td");
+
+        cell0.appendChild(document.createTextNode(cdArray[r].storeId));
+        row.appendChild(cell0);
+        cell1.appendChild(document.createTextNode(cdArray[r].cdSum));
+        row.appendChild(cell1);
+
+        tbl.appendChild(row); // add the row to the end of the table body
+    }
+
+}
+
+
+
 
 function addOrder() {
 
@@ -116,15 +150,14 @@ function addOrder() {
     let selectStore = document.getElementById('storeSelect');
     let storeValue = selectStore.options[selectStore.selectedIndex].value;
 
-    console.log(salesPersonValue)
-    console.log(cdValue)
-    console.log(storeValue)
+    let pricePaid = document.getElementById('howmany').value
 
     let newOrder = new Order();
     newOrder.SalesPersonId = salesPersonValue;
     newOrder.CdId = cdValue;
     newOrder.StoreId = storeValue;
-    console.log(newOrder);
+    newOrder.PricePaid = pricePaid;
+
     $.ajax({
         url: "api/Orders",
         type: "POST",
@@ -145,12 +178,27 @@ function findStorePerformance() {
     let selectPerformanceStore = document.getElementById('storePerformanceSelect');
     let storePerformanceValue = selectPerformanceStore.options[selectPerformanceStore.selectedIndex].value;
 
-    console.log(storePerformanceValue);
-
     $.getJSON('api/Orders' + '/' + storePerformanceValue)
         .done(function (data) {
+            let performanceArray = data;
+            drawPerformanceTable(performanceArray);
+            $('#description').append(data);
+        })
+        .fail(function (jqXHR, textStatus, err) {
+            $('#description').text('Error: ' + err);
+        });
+
+}
+
+function findCdPerformance() {
+
+
+    $.getJSON('api/Orders' + '/CdCountByStore')
+        .done(function (data) {
+            let cdArray = data;
             console.log(data);
-            $('#description').text(data);
+            drawCdTable(cdArray);
+            //$('#description').append(data);
         })
         .fail(function (jqXHR, textStatus, err) {
             $('#description').text('Error: ' + err);

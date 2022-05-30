@@ -36,9 +36,27 @@
         <h2>I want to see the performance of my stores</h2>
         <select id="storePerformanceSelect" />
         <input type="button" value="Search" onclick="findStorePerformance();" />
-        <p id="description" />
+        <table data-role="table" class="ui-responsive" id="performanceTable">
+            <thead>
+                <tr>
+                    <th>Store</th>
+                    <th>Sum</th>
+                </tr>
+            </thead>
+        </table>
     </div>
     <br /><br /><br /><br />
+    <h2>I want to see the StoreID and the amount of Cds they sell that cost 13$ or more.</h2>
+    <input type="button" value="Search" onclick="findCdPerformance();" />
+    <table data-role="table" class="ui-responsive" id="cdTable">
+        <thead>
+            <tr>
+                <th>StoreID</th>
+                <th>SumOfCdsOver13$</th>
+            </tr>
+        </thead>
+    </table>
+    <br />
 
 
     <script src="http://ajax.aspnetcdn.com/ajax/jQuery/jquery-2.0.3.min.js"></script>

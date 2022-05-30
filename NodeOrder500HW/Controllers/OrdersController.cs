@@ -68,6 +68,7 @@ namespace NodeOrder500HW.Controllers
             newOrder.SalesPersonId = oneOrder.SalesPersonId;
             newOrder.Date = Convert.ToString(DateTime.Now);
             newOrder.CdId = oneOrder.CdId;
+            newOrder.PricePaid = oneOrder.PricePaid;
             newOrder.Cd = searchCd;
             newOrder.SalesPerson = searchSales;
             newOrder.Store = searchStore;
@@ -88,19 +89,21 @@ namespace NodeOrder500HW.Controllers
 
         }
         [HttpGet("{store}")]
-        public List<storePerformanceData> Get(string store)
+        public List<storePerformanceData> Get(int store)
         {
 
             List<storePerformanceData> myList = new List<storePerformanceData>();
 
             var context = new Models.OrdersDBContext();
-            var performanceQuery = from eachOrderEvent in context.OrdersTables
-                                   group eachOrderEvent by eachOrderEvent.Store.City into storeGroup
-                                   select new
-                                   {
-                                       Store = storeGroup.Key,
-                                       TotalSum = storeGroup.Sum(x => x.PricePaid)
-                                   };
+            var performanceQuery = (from eachOrderEvent in context.OrdersTables
+                                    where eachOrderEvent.StoreId == store
+                                    group eachOrderEvent by eachOrderEvent.Store.City into storeGroup
+                                    select new
+                                    {
+                                        Store = storeGroup.Key,
+                                        TotalSum = storeGroup.Sum(x => x.PricePaid)
+                                    });
+
             storePerformanceData storePerformance = new storePerformanceData();
 
             foreach (var item in performanceQuery) 
@@ -110,8 +113,41 @@ namespace NodeOrder500HW.Controllers
                 temp.Sum = item.TotalSum;
                 myList.Add(temp);
             }
-            
+
+
             return myList;
+            
+
+        }
+
+        [HttpGet("CdCountByStore")]
+        public List<CdPerformanceData> GetCdCountByStore()
+        {
+
+            List<CdPerformanceData> myList = new List<CdPerformanceData>();
+
+            var context = new Models.OrdersDBContext();
+            var cdCountQuery = (from eachOrderEvent in context.OrdersTables
+                                    where eachOrderEvent.PricePaid > 13
+                                    group eachOrderEvent by eachOrderEvent.Store.StoreId into storeGroup
+                                    select new
+                                    {
+                                        StoreId = storeGroup.Key,
+                                        CdSum = storeGroup.Count()
+                                    }).OrderByDescending(x=> x.CdSum);
+
+            foreach (var item in cdCountQuery)
+            {
+                CdPerformanceData temp = new CdPerformanceData();
+                temp.StoreId = item.StoreId;
+                temp.CdSum = item.CdSum;
+                myList.Add(temp);
+            }
+
+
+            return myList;
+
+
         }
 
 
@@ -136,6 +172,7 @@ namespace NodeOrder500HW.Controllers
         public int StoreId { get; set; }
         public int SalesPersonId { get; set; }
         public int CdId { get; set; }
+        public int PricePaid { get; set; }
         public DateTime Date { get; set; }
 
     }
@@ -143,6 +180,13 @@ namespace NodeOrder500HW.Controllers
     {
         public string Store { get; set; }
         public int Sum { get; set; }
+
+    }
+
+    public class CdPerformanceData
+    {
+        public int StoreId { get; set; }
+        public int CdSum { get; set; }
 
     }
 
